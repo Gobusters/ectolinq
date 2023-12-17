@@ -7,14 +7,17 @@ func NewList[T any]() List[T] {
 	return make(List[T], 0)
 }
 
+// Length returns the length of the array
+func (l List[T]) Length() int {
+	return len(l)
+}
+
 // From returns a List from an array
-// items: The array to convert
 func From[T any](items []T) List[T] {
 	return items
 }
 
 // ForEach executes an action for each element in the array in parallel
-// items: The array to iterate
 // action: The action to perform on each element
 func (l List[T]) ForEach(fn func(T)) List[T] {
 	ForEach(l, fn)
@@ -22,287 +25,275 @@ func (l List[T]) ForEach(fn func(T)) List[T] {
 }
 
 // Find returns the first element in the array that satisfies the predicate
-// items: The array to search
 // predicate: The predicate to test each element against
 func (l List[T]) Find(fn func(T) bool) T {
 	return Find(l, fn)
 }
 
 // Reverse reverses the order of the elements in the array
-// items: The array to reverse
-func (l List[T]) Reverse(items []T) List[T] {
+func (l List[T]) Reverse() List[T] {
 	return Reverse(l)
 }
 
 // FindIndex returns the index of the first occurrence of a value in the array
-// items: The array to search
 // value: The value to locate in the array
-func (l List[T]) FindIndex(items []T, value T) int {
-	return FindIndex(items, value)
+func (l List[T]) FindIndex(value T) int {
+	return FindIndex(l, value)
 }
 
-// FindIndexWith returns the index of the first element in the array that satisfies the predicate
-// items: The array to search
+// FindIndexWhere returns the index of the first element in the array that satisfies the predicate
 // predicate: The predicate to test each element against
-func (l List[T]) FindIndexWith(items []T, predicate func(T) bool) int {
-	return FindIndexWith(items, predicate)
+func (l List[T]) FindIndexWhere(predicate func(T) bool) int {
+	return FindIndexWhere(l, predicate)
 }
 
 // FindLast returns the last element in the array that satisfies the predicate
-// items: The array to search
 // predicate: The predicate to test each element against
-func (l List[T]) FindLast(items []T, val T) T {
-	return FindLast(items, val)
+func (l List[T]) FindLast(val T) T {
+	return FindLast(l, val)
 }
 
-// FindLastWith returns the last element in the array that satisfies the predicate
-// items: The array to search
+// FindLastWhere returns the last element in the array that satisfies the predicate
 // predicate: The predicate to test each element against
-func (l List[T]) FindLastWith(items []T, predicate func(T) bool) T {
-	return FindLastWith(items, predicate)
+func (l List[T]) FindLastWhere(predicate func(T) bool) T {
+	return FindLastWhere(l, predicate)
 }
 
 // FindLastIndex returns the index of the last occurrence of a value in the array
-// items: The array to search
 // value: The value to locate in the array
-func (l List[T]) FindLastIndex(items []T, value T) int {
-	return FindLastIndex(items, value)
+func (l List[T]) FindLastIndex(value T) int {
+	return FindLastIndex(l, value)
 }
 
-// FindLastIndexWith returns the index of the last element in the array that satisfies the predicate
-// items: The array to search
+// FindLastIndexWhere returns the index of the last element in the array that satisfies the predicate
 // predicate: The predicate to test each element against
-func (l List[T]) FindLastIndexWith(items []T, predicate func(T) bool) int {
-	return FindLastIndexWith(items, predicate)
+func (l List[T]) FindLastIndexWhere(predicate func(T) bool) int {
+	return FindLastIndexWhere(l, predicate)
 }
 
 // IndexOf returns the index of the first occurrence of a value in the array
-// items: The array to search
 // value: The value to locate in the array
-func (l List[T]) IndexOf(items []T, value T) int {
-	return IndexOf(items, value)
+func (l List[T]) IndexOf(value T) int {
+	return IndexOf(l, value)
 }
 
 // LastIndexOf returns the index of the last occurrence of a value in the array
-// items: The array to search
 // value: The value to locate in the array
-func (l List[T]) LastIndexOf(items []T, value T) int {
-	return LastIndexOf(items, value)
+func (l List[T]) LastIndexOf(value T) int {
+	return LastIndexOf(l, value)
 }
 
 // Contains determines whether an array contains a specific value
-// items: The array to search
 // value: The value to locate in the array
-func (l List[T]) Contains(items []T, value T) bool {
-	return Contains(items, value)
+func (l List[T]) Contains(value T) bool {
+	return Contains(l, value)
 }
 
 // All determines whether all elements of an array satisfy a condition
-// items: The array to search
 // predicate: The predicate to test each element against
-func (l List[T]) All(items []T, predicate func(T) bool) bool {
-	return All(items, predicate)
+func (l List[T]) All(predicate func(T) bool) bool {
+	return All(l, predicate)
 }
 
 // Any determines whether any element of an array satisfies a condition
-// items: The array to search
 // predicate: The predicate to test each element against
-func (l List[T]) Any(items []T, predicate func(T) bool) bool {
-	return Any(items, predicate)
+func (l List[T]) Any(predicate func(T) bool) bool {
+	return Any(l, predicate)
 }
 
 // Count returns the number of elements in an array that satisfy a condition
-// items: The array to search
 // predicate: The predicate to test each element against
-func (l List[T]) Count(items []T, predicate func(T) bool) int {
-	return Count(items, predicate)
+func (l List[T]) Count(predicate func(T) bool) int {
+	return Count(l, predicate)
 }
 
 // Distinct returns distinct elements from an array
-// items: The array to search
-func (l List[T]) Distinct(items []T) List[T] {
-	return Distinct(items)
+func (l List[T]) Distinct() List[T] {
+	return Distinct(l)
 }
 
 // Except returns the elements of an array that do not appear in a second array
-// items: The array to search
 // other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
-func (l List[T]) Except(items []T, other []T) List[T] {
-	return Except(items, other)
+func (l List[T]) Except(other []T) List[T] {
+	return Except(l, other)
 }
 
 // Intersect returns the elements that appear in two arrays
-// items: The array to search
 // other: The array whose distinct elements that also appear in the first array will be returned
-func (l List[T]) Intersect(items []T, other []T) List[T] {
-	return Intersect(items, other)
+func (l List[T]) Intersect(other []T) List[T] {
+	return Intersect(l, other)
 }
 
 // Union returns the elements that appear in either of two arrays
-// items: The first array to search
 // other: The second array to search
-func (l List[T]) Union(items []T, other []T) List[T] {
-	return Union(items, other)
+func (l List[T]) Union(other []T) List[T] {
+	return Union(l, other)
 }
 
 // SequenceEqual determines whether two arrays are equal
-// items: The first array to compare
 // other: The second array to compare
-func (l List[T]) SequenceEqual(items []T, other []T) bool {
-	return SequenceEqual(items, other)
+func (l List[T]) SequenceEqual(other []T) bool {
+	return SequenceEqual(l, other)
 }
 
 // Reduce applies an accumulator function over an array
-// items: The array to reduce
 // accumulator: The accumulator function to use
-func (l List[T]) Reduce(items []T, accumulator func(T, T) T) T {
-	return Reduce(items, accumulator)
+func (l List[T]) Reduce(accumulator func(T, T) T) T {
+	return Reduce(l, accumulator)
 }
 
-// ReduceWith applies an accumulator function over an array. Starts with the specified value
-// items: The array to reduce
+// ReduceWhere applies an accumulator function over an array. Starts with the specified value
 // initialValue: The value to start with
 // accumulator: The accumulator function to use
-func (l List[T]) ReduceWith(items []T, initialValue T, accumulator func(T, T) T) T {
-	return ReduceWith(items, initialValue, accumulator)
+func (l List[T]) ReduceWhere(initialValue T, accumulator func(T, T) T) T {
+	return ReduceWhere(l, initialValue, accumulator)
 }
 
 // Filter removes all elements from an array that satisfy the predicate
-// items: The array to filter
 // predicate: The predicate to test each element against
-func (l List[T]) Filter(items []T, predicate func(T) bool) List[T] {
-	return Filter(items, predicate)
+func (l List[T]) Filter(predicate func(T) bool) List[T] {
+	return Filter(l, predicate)
 }
 
 // RemoveAt removes an element from an array at the specified index
-// items: The array to remove elements from
-func (l List[T]) RemoveAt(items []T, index int) List[T] {
-	return RemoveAt(items, index)
+// index: The index to remove at
+func (l List[T]) RemoveAt(index int) List[T] {
+	return RemoveAt(l, index)
 }
 
 // Remove removes the first occurrence of a specific object from an array
-// items: The array to remove elements from
 // value: The value to remove from the array
-func (l List[T]) Remove(items []T, value T) List[T] {
-	return Remove(items, value)
+func (l List[T]) Remove(value T) List[T] {
+	return Remove(l, value)
 }
 
-// RemoveWith removes the first element in the array that satisfies the predicate
-// items: The array to remove elements from
+// RemoveWhere removes the first element in the array that satisfies the predicate
 // predicate: The predicate to test each element against
-func (l List[T]) RemoveWith(items []T, predicate func(T) bool) List[T] {
-	return RemoveWith(items, predicate)
+func (l List[T]) RemoveWhere(predicate func(T) bool) List[T] {
+	return RemoveWhere(l, predicate)
 }
 
 // Randomize returns a new array with the elements in a random order
-// items: The array to randomize
-func (l List[T]) Randomize(items []T) List[T] {
-	return Randomize(items)
+func (l List[T]) Randomize() List[T] {
+	return Randomize(l)
 }
 
 // Slice returns a new array with the elements from the specified start index to the specified end index
-// items: The array to slice
 // start: The index to start at
 // end: The index to end at
-func (l List[T]) Slice(items []T, start int, end int) List[T] {
-	return Slice(items, start, end)
+func (l List[T]) Slice(start int, end int) List[T] {
+	return Slice(l, start, end)
 }
 
-// SortWith sorts the elements of an array in place using the specified comparer function
-// items: The array to sort
+// SortWhere sorts the elements of an array in place using the specified comparer function
 // comparer: The comparer function to use
-func (l List[T]) SortWith(items []T, comparer func(T, T) bool) List[T] {
-	return SortWith(items, comparer)
+func (l List[T]) SortWhere(comparer func(T, T) bool) List[T] {
+	return SortWhere(l, comparer)
 }
 
 // Take returns a new array with the specified number of elements from the start of the array
-// items: The array to take elements from
 // count: The number of elements to take
-func (l List[T]) Take(items []T, count int) List[T] {
-	return Take(items, count)
+func (l List[T]) Take(count int) List[T] {
+	return Take(l, count)
 }
 
 // TakeLast returns a new array with the specified number of elements from the end of the array
-// items: The array to take elements from
 // count: The number of elements to take
-func (l List[T]) TakeLast(items []T, count int) List[T] {
-	return TakeLast(items, count)
+func (l List[T]) TakeLast(count int) List[T] {
+	return TakeLast(l, count)
 }
 
 // TakeWhile returns a new array with elements from the start of the array while the predicate returns true
-// items: The array to take elements from
 // predicate: The predicate to test each element against
-func (l List[T]) TakeWhile(items []T, predicate func(T) bool) List[T] {
-	return TakeWhile(items, predicate)
+func (l List[T]) TakeWhile(predicate func(T) bool) List[T] {
+	return TakeWhile(l, predicate)
 }
 
 // Skip returns a new array with the specified number of elements removed from the start of the array
-// items: The array to skip elements from
 // count: The number of elements to skip
-func (l List[T]) Skip(items []T, count int) List[T] {
-	return Skip(items, count)
+func (l List[T]) Skip(count int) List[T] {
+	return Skip(l, count)
 }
 
 // SkipLast returns a new array with the specified number of elements removed from the end of the array
-// items: The array to skip elements from
 // count: The number of elements to skip
-func (l List[T]) SkipLast(items []T, count int) List[T] {
-	return SkipLast(items, count)
+func (l List[T]) SkipLast(count int) List[T] {
+	return SkipLast(l, count)
 }
 
 // SkipWhile returns a new array with elements removed from the start of the array while the predicate returns true
-// items: The array to skip elements from
 // predicate: The predicate to test each element against
-func (l List[T]) SkipWhile(items []T, predicate func(T) bool) List[T] {
-	return SkipWhile(items, predicate)
+func (l List[T]) SkipWhile(predicate func(T) bool) List[T] {
+	return SkipWhile(l, predicate)
 }
 
 // Chunk returns a new array with elements grouped into chunks of the specified size
-// items: The array to chunk
 // size: The size of each chunk
-func (l List[T]) Chunk(items []T, size int) []List[T] {
+func (l List[T]) Chunk(size int) []List[T] {
 	var genericLists []List[T]
-	chunks := Chunk(items, size)
+	chunks := Chunk(l, size)
 	for _, slice := range chunks {
 		genericLists = append(genericLists, List[T](slice))
 	}
 	return genericLists
 }
 
-// Flatten returns a new array with all sub-array elements concatenated
-// items: The array to flatten
-func (l List[T]) Flatten(items [][]T) List[T] {
-	return Flatten(items)
-}
-
 // ReplaceAll replaces all occurrences of a value in an array with another value
-// items: The array to replace values in
 // oldValue: The value to replace
 // newValue: The value to replace with
-func (l List[T]) ReplaceAll(items []T, oldValue T, newValue T) List[T] {
-	return ReplaceAll(items, oldValue, newValue)
+func (l List[T]) ReplaceAll(oldValue T, newValue T) List[T] {
+	return ReplaceAll(l, oldValue, newValue)
 }
 
-// ReplaceAllWith replaces all occurrences of a value in an array with the result of the selector function
-// items: The array to replace values in
+// ReplaceAllWhere replaces all occurrences of a value in an array with the result of the selector function
 // value: The value to replace with
 // predicate: The selector function to use
-func (l List[T]) ReplaceAllWith(items []T, value T, predicate func(T) bool) List[T] {
-	return ReplaceAllWith(items, value, predicate)
+func (l List[T]) ReplaceAllWhere(value T, predicate func(T) bool) List[T] {
+	return ReplaceAllWhere(l, value, predicate)
 }
 
 // Replace replaces the first occurrence of a value in an array with another value
-// items: The array to replace values in
 // oldValue: The value to replace
 // newValue: The value to replace with
-func (l List[T]) Replace(items []T, oldValue T, newValue T) List[T] {
-	return Replace(items, oldValue, newValue)
+func (l List[T]) Replace(oldValue T, newValue T) List[T] {
+	return Replace(l, oldValue, newValue)
 }
 
-// ReplaceWith replaces the first occurrence of a value in an array with the result of the selector function
-// items: The array to replace values in
+// ReplaceWhere replaces the first occurrence of a value in an array with the result of the selector function
 // value: The value to replace with
 // predicate: The selector function to use
-func (l List[T]) ReplaceWith(items []T, value T, predicate func(T) bool) List[T] {
-	return ReplaceWith(items, value, predicate)
+func (l List[T]) ReplaceWhere(value T, predicate func(T) bool) List[T] {
+	return ReplaceWhere(l, value, predicate)
+}
+
+// Push adds an element to the end of the array
+// value: The value to push
+func (l List[T]) Push(value T) List[T] {
+	return Push(l, value)
+}
+
+// Pop removes the last element from an array and returns it
+func (l List[T]) Pop() (T, List[T]) {
+	return Pop(l)
+}
+
+// Unshift adds an element to the start of the array
+// value: The value to unshift
+func (l List[T]) Unshift(value T) List[T] {
+	return Unshift(l, value)
+}
+
+// Shift removes the first element from an array and returns it
+func (l List[T]) Shift() (T, List[T]) {
+	return Shift(l)
+}
+
+// Last returns the last element in the array
+func (l List[T]) Last() T {
+	return Last(l)
+}
+
+// First returns the first element in the array
+func (l List[T]) First() T {
+	return First(l)
 }

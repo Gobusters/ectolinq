@@ -44,10 +44,10 @@ func FindIndex[T any](items []T, value T) int {
 	return -1
 }
 
-// FindIndexWith returns the index of the first element in the array that satisfies the predicate
+// FindIndexWhere returns the index of the first element in the array that satisfies the predicate
 // items: The array to search
 // predicate: The predicate to test each element against
-func FindIndexWith[T any](items []T, predicate func(T) bool) int {
+func FindIndexWhere[T any](items []T, predicate func(T) bool) int {
 	for index, item := range items {
 		if predicate(item) {
 			return index
@@ -61,15 +61,15 @@ func FindIndexWith[T any](items []T, predicate func(T) bool) int {
 // items: The array to search
 // predicate: The predicate to test each element against
 func FindLast[T any](items []T, val T) T {
-	return FindLastWith(items, func(item T) bool {
+	return FindLastWhere(items, func(item T) bool {
 		return Equals(item, val)
 	})
 }
 
-// FindLastWith returns the last element in the array that satisfies the predicate
+// FindLastWhere returns the last element in the array that satisfies the predicate
 // items: The array to search
 // predicate: The predicate to test each element against
-func FindLastWith[T any](items []T, predicate func(T) bool) T {
+func FindLastWhere[T any](items []T, predicate func(T) bool) T {
 	var item T
 
 	for _, item = range Reverse(items) {
@@ -85,15 +85,15 @@ func FindLastWith[T any](items []T, predicate func(T) bool) T {
 // items: The array to search
 // value: The value to locate in the array
 func FindLastIndex[T any](items []T, value T) int {
-	return FindLastIndexWith(items, func(item T) bool {
+	return FindLastIndexWhere(items, func(item T) bool {
 		return Equals(item, value)
 	})
 }
 
-// FindLastIndexWith returns the index of the last element in the array that satisfies the predicate
+// FindLastIndexWhere returns the index of the last element in the array that satisfies the predicate
 // items: The array to search
 // predicate: The predicate to test each element against
-func FindLastIndexWith[T any](items []T, predicate func(T) bool) int {
+func FindLastIndexWhere[T any](items []T, predicate func(T) bool) int {
 	for index, item := range Reverse(items) {
 		if predicate(item) {
 			return index
@@ -258,11 +258,11 @@ func Reduce[T any](items []T, accumulator func(T, T) T) T {
 	return reduced
 }
 
-// ReduceWith applies an accumulator function over an array. Starts with the specified value
+// ReduceWhere applies an accumulator function over an array. Starts with the specified value
 // items: The array to reduce
 // initialValue: The value to start with
 // accumulator: The accumulator function to use
-func ReduceWith[T any](items []T, initialValue T, accumulator func(T, T) T) T {
+func ReduceWhere[T any](items []T, initialValue T, accumulator func(T, T) T) T {
 	var reduced T
 
 	for _, item := range items {
@@ -322,17 +322,17 @@ func Remove[T any](items []T, value T) []T {
 	return RemoveAt(items, IndexOf(items, value))
 }
 
-// RemoveWith removes the first element in the array that satisfies the predicate
+// RemoveWhere removes the first element in the array that satisfies the predicate
 // items: The array to remove elements from
 // predicate: The predicate to test each element against
-func RemoveWith[T any](items []T, predicate func(T) bool) []T {
-	return RemoveAt(items, FindIndexWith(items, predicate))
+func RemoveWhere[T any](items []T, predicate func(T) bool) []T {
+	return RemoveAt(items, FindIndexWhere(items, predicate))
 }
 
-// KeyWith returns the a Map of the array where the key is the result of the selector function
+// KeyWhere returns the a Map of the array where the key is the result of the selector function
 // items: The array to convert to a Map
 // selector: The selector function to use
-func KeyWith[T any, U comparable](items []T, selector func(T) U) map[U]T {
+func KeyWhere[T any, U comparable](items []T, selector func(T) U) map[U]T {
 	var key = make(map[U]T)
 
 	for _, item := range items {
@@ -346,17 +346,17 @@ func KeyWith[T any, U comparable](items []T, selector func(T) U) map[U]T {
 // items: The array to convert to a Map
 // path: The path to the field to use as the key. If the field is not found, the item will not be added to the Map
 func Key[T any, U comparable](items []T, path string) map[U]T {
-	return KeyWith(items, func(item T) U {
+	return KeyWhere(items, func(item T) U {
 		value, _ := Get(item, path)
 		casted, _ := value.(U)
 		return casted
 	})
 }
 
-// GroupWith returns the a Map of the array where the key is the result of the selector function and the value is an array of all the elements that match the key
+// GroupWhere returns the a Map of the array where the key is the result of the selector function and the value is an array of all the elements that match the key
 // items: The array to convert to a Map
 // selector: The selector function to use
-func GroupWith[T any, U comparable](items []T, selector func(T) U) map[U][]T {
+func GroupWhere[T any, U comparable](items []T, selector func(T) U) map[U][]T {
 	var key = make(map[U][]T)
 
 	for _, item := range items {
@@ -370,7 +370,7 @@ func GroupWith[T any, U comparable](items []T, selector func(T) U) map[U][]T {
 // items: The array to convert to a Map
 // path: The path to the field to use as the key. If the field is not found, the item will not be added to the Map
 func Group[T any, U comparable](items []T, path string) map[U][]T {
-	return GroupWith(items, func(item T) U {
+	return GroupWhere(items, func(item T) U {
 		value, _ := Get(item, path)
 		casted, _ := value.(U)
 		return casted
@@ -395,10 +395,10 @@ func Slice[T any](items []T, start int, end int) []T {
 	return items[start:end]
 }
 
-// SortWith sorts the elements of an array in place using the specified comparer function
+// SortWhere sorts the elements of an array in place using the specified comparer function
 // items: The array to sort
 // comparer: The comparer function to use
-func SortWith[T any](items []T, comparer func(T, T) bool) []T {
+func SortWhere[T any](items []T, comparer func(T, T) bool) []T {
 	for i := 0; i < len(items)-1; i++ {
 		for j := i + 1; j < len(items); j++ {
 			if comparer(items[i], items[j]) {
@@ -515,11 +515,11 @@ func ReplaceAll[T any](items []T, oldValue T, newValue T) []T {
 	return items
 }
 
-// ReplaceAllWith replaces all occurrences of a value in an array with the result of the selector function
+// ReplaceAllWhere replaces all occurrences of a value in an array with the result of the selector function
 // items: The array to replace values in
 // value: The value to replace with
 // predicate: The selector function to use
-func ReplaceAllWith[T any](items []T, value T, predicate func(T) bool) []T {
+func ReplaceAllWhere[T any](items []T, value T, predicate func(T) bool) []T {
 	for index, item := range items {
 		if predicate(item) {
 			items[index] = value
@@ -538,11 +538,53 @@ func Replace[T any](items []T, oldValue T, newValue T) []T {
 	return items
 }
 
-// ReplaceWith replaces the first occurrence of a value in an array with the result of the selector function
+// ReplaceWhere replaces the first occurrence of a value in an array with the result of the selector function
 // items: The array to replace values in
 // value: The value to replace with
 // predicate: The selector function to use
-func ReplaceWith[T any](items []T, value T, predicate func(T) bool) []T {
-	items[FindIndexWith(items, predicate)] = value
+func ReplaceWhere[T any](items []T, value T, predicate func(T) bool) []T {
+	items[FindIndexWhere(items, predicate)] = value
 	return items
+}
+
+// Push adds an element to the end of an array
+// items: The array to add the element to
+// item: The element to add
+func Push[T any](items []T, item T) []T {
+	return append(items, item)
+}
+
+// Pop removes the last element from an array and returns it
+// items: The array to remove the element from
+func Pop[T any](items []T) (T, []T) {
+	return items[len(items)-1], items[:len(items)-1]
+}
+
+// Unshift adds an element to the start of an array
+// items: The array to add the element to
+// item: The element to add
+func Unshift[T any](items []T, item T) []T {
+	return append([]T{item}, items...)
+}
+
+// Shift removes the first element from an array and returns it
+// items: The array to remove the element from
+func Shift[T any](items []T) (T, []T) {
+	return items[0], items[1:]
+}
+
+// Last returns the last element in an array
+// items: The array to get the last element from
+func Last[T any](items []T) T {
+	return items[len(items)-1]
+}
+
+// First returns the first element in an array
+// items: The array to get the first element from
+func First[T any](items []T) T {
+	var item T
+	if len(items) > 0 {
+		item = items[0]
+	}
+	return item
 }

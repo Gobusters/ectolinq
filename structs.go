@@ -13,6 +13,12 @@ func Equals[T any](a T, b T) bool {
 	return reflect.DeepEqual(a, b)
 }
 
+// IsEmpty returns if a value is empty
+// val: The value to check
+func IsEmpty[T any](val T) bool {
+	return reflect.DeepEqual(val, reflect.Zero(reflect.TypeOf(val)).Interface())
+}
+
 // Get returns the value of a field in a struct
 // s: The struct to get the value from
 // path: The path to the field

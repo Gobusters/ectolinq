@@ -19,6 +19,17 @@ func IsEmpty[T any](val T) bool {
 	return reflect.DeepEqual(val, reflect.Zero(reflect.TypeOf(val)).Interface())
 }
 
+// IfEmpty returns a default value if a value is empty
+// val: The value to check
+// def: The default value
+func IfEmpty[T any](val T, def T) T {
+	if IsEmpty(val) {
+		return def
+	}
+
+	return val
+}
+
 // Get returns the value of a field in a struct
 // s: The struct to get the value from
 // path: The path to the field

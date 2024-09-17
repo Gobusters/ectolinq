@@ -123,7 +123,7 @@ func (d *ConcurrentDictionary[T]) ToArray() []T {
 func (d *ConcurrentDictionary[T]) ToList() List[T] {
 	d.mutex.RLock()
 	defer d.mutex.RUnlock()
-	return d.ToArray()
+	return d.values.ToList() // Use values.ToList() instead of ToArray()
 }
 
 // ToMap returns the dictionary as a map
@@ -135,10 +135,14 @@ func (d *ConcurrentDictionary[T]) ToMap() map[string]T {
 
 // Merge merges the given dictionaries into the dictionary
 // dicts: The dictionaries to merge
-func (d *ConcurrentDictionary[T]) Merge(dicts ...Dictionary[T]) {
+func (d *ConcurrentDictionary[T]) Merge(dicts ...*ConcurrentDictionary[T]) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
-	d.values.Merge(dicts...)
+	for _, dict := range dicts {
+		dict.mutex.RLock()
+		d.values.Merge(*dict.values)
+		dict.mutex.RUnlock()
+	}
 }
 
 // MergeMaps merges the given maps into the dictionary

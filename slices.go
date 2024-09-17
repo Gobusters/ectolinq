@@ -2,6 +2,7 @@ package ectolinq
 
 import (
 	"math/rand"
+	"sort"
 )
 
 // Find returns the first element in the array that satisfies the predicate
@@ -19,16 +20,15 @@ func Find[T any](items []T, predicate func(T) bool) T {
 	return item
 }
 
-// Reverse reverses the order of the elements in the array
+// Reverse reverses the order of the elements in the array in-place
 // items: The array to reverse
 func Reverse[T any](items []T) []T {
-	var reversed []T
-
-	for index := len(items) - 1; index >= 0; index-- {
-		reversed = append(reversed, items[index])
+	// Consider using a more efficient in-place reversal
+	for i := 0; i < len(items)/2; i++ {
+		j := len(items) - 1 - i
+		items[i], items[j] = items[j], items[i]
 	}
-
-	return reversed
+	return items
 }
 
 // FindIndex returns the index of the first occurrence of a value in the array
@@ -40,7 +40,6 @@ func FindIndex[T any](items []T, value T) int {
 			return index
 		}
 	}
-
 	return -1
 }
 
@@ -61,9 +60,14 @@ func FindIndexWhere[T any](items []T, predicate func(T) bool) int {
 // items: The array to search
 // predicate: The predicate to test each element against
 func FindLast[T any](items []T, val T) T {
-	return FindLastWhere(items, func(item T) bool {
-		return Equals(item, val)
-	})
+	// Instead of reversing the slice, consider iterating from the end
+	for i := len(items) - 1; i >= 0; i-- {
+		if Equals(items[i], val) {
+			return items[i]
+		}
+	}
+	var zero T
+	return zero
 }
 
 // FindLastWhere returns the last element in the array that satisfies the predicate
@@ -85,120 +89,84 @@ func FindLastWhere[T any](items []T, predicate func(T) bool) T {
 // items: The array to search
 // value: The value to locate in the array
 func FindLastIndex[T any](items []T, value T) int {
-	return FindLastIndexWhere(items, func(item T) bool {
-		return Equals(item, value)
-	})
+	for i := len(items) - 1; i >= 0; i-- {
+		if Equals(items[i], value) {
+			return i
+		}
+	}
+	return -1
 }
 
 // FindLastIndexWhere returns the index of the last element in the array that satisfies the predicate
 // items: The array to search
 // predicate: The predicate to test each element against
 func FindLastIndexWhere[T any](items []T, predicate func(T) bool) int {
-	for index, item := range Reverse(items) {
-		if predicate(item) {
-			return index
+	for i := len(items) - 1; i >= 0; i-- {
+		if predicate(items[i]) {
+			return i
 		}
 	}
-
-	return -1
-}
-
-// IndexOf returns the index of the first occurrence of a value in the array
-// items: The array to search
-// value: The value to locate in the array
-func IndexOf[T any](items []T, value T) int {
-	for index, item := range items {
-		if Equals(item, value) {
-			return index
-		}
-	}
-
-	return -1
-}
-
-// LastIndexOf returns the index of the last occurrence of a value in the array
-// items: The array to search
-// value: The value to locate in the array
-func LastIndexOf[T any](items []T, value T) int {
-	for index, item := range Reverse(items) {
-		if Equals(item, value) {
-			return index
-		}
-	}
-
 	return -1
 }
 
 // Contains determines whether an array contains a specific value
 // items: The array to search
 // value: The value to locate in the array
-func Contains[T any](items []T, value T) bool {
-	return IndexOf(items, value) != -1
-}
-
-// All determines whether all elements of an array satisfy a condition
-// items: The array to search
-// predicate: The predicate to test each element against
-func All[T any](items []T, predicate func(T) bool) bool {
+func Contains[T comparable](items []T, value T) bool {
 	for _, item := range items {
-		if !predicate(item) {
-			return false
-		}
-	}
-
-	return true
-}
-
-// Any determines whether any element of an array satisfies a condition
-// items: The array to search
-// predicate: The predicate to test each element against
-func Any[T any](items []T, predicate func(T) bool) bool {
-	for _, item := range items {
-		if predicate(item) {
+		if item == value {
 			return true
 		}
 	}
-
 	return false
-}
-
-// Count returns the number of elements in an array that satisfy a condition
-// items: The array to search
-// predicate: The predicate to test each element against
-func Count[T any](items []T, predicate func(T) bool) int {
-	count := 0
-
-	for _, item := range items {
-		if predicate(item) {
-			count++
-		}
-	}
-
-	return count
 }
 
 // Distinct returns distinct elements from an array
 // items: The array to search
-func Distinct[T any](items []T) []T {
-	var distinct []T
+func Distinct[T comparable](items []T) []T {
+	seen := make(map[T]struct{}, len(items))
+	results := make([]T, 0, len(items))
 
 	for _, item := range items {
-		if !Contains(distinct, item) {
-			distinct = append(distinct, item)
+		if _, ok := seen[item]; !ok {
+			seen[item] = struct{}{}
+			results = append(results, item)
 		}
 	}
 
-	return distinct
+	return results
+}
+
+// DistinctBy returns distinct elements from an array based on a key selector
+// items: The array to search
+// keySelector: The function to extract the key from each element
+func DistinctBy[T any, U comparable](items []T, keySelector func(T) U) []T {
+	seen := make(map[U]struct{}, len(items))
+	results := make([]T, 0, len(items))
+
+	for _, item := range items {
+		key := keySelector(item)
+		if _, ok := seen[key]; !ok {
+			seen[key] = struct{}{}
+			results = append(results, item)
+		}
+	}
+
+	return results
 }
 
 // Except returns the elements of an array that do not appear in a second array
 // items: The array to search
 // other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
-func Except[T any](items []T, other []T) []T {
-	var except []T
+func Except[T comparable](items []T, other []T) []T {
+	otherSet := make(map[T]struct{}, len(other))
+	for _, item := range other {
+		otherSet[item] = struct{}{}
+	}
 
+	var except []T
 	for _, item := range items {
-		if !Contains(other, item) {
+		if _, ok := otherSet[item]; !ok {
 			except = append(except, item)
 		}
 	}
@@ -209,12 +177,20 @@ func Except[T any](items []T, other []T) []T {
 // Intersect returns the elements that appear in two arrays
 // items: The array to search
 // other: The array whose distinct elements that also appear in the first array will be returned
-func Intersect[T any](items []T, other []T) []T {
-	var intersect []T
+func Intersect[T comparable](items []T, other []T) []T {
+	otherSet := make(map[T]struct{}, len(other))
+	for _, item := range other {
+		otherSet[item] = struct{}{}
+	}
 
+	var intersect []T
+	seen := make(map[T]struct{})
 	for _, item := range items {
-		if Contains(other, item) {
-			intersect = append(intersect, item)
+		if _, ok := otherSet[item]; ok {
+			if _, alreadySeen := seen[item]; !alreadySeen {
+				intersect = append(intersect, item)
+				seen[item] = struct{}{}
+			}
 		}
 	}
 
@@ -224,7 +200,7 @@ func Intersect[T any](items []T, other []T) []T {
 // Union returns the elements that appear in either of two arrays
 // items: The first array to search
 // other: The second array to search
-func Union[T any](items []T, other []T) []T {
+func Union[T comparable](items []T, other []T) []T {
 	return Distinct(append(items, other...))
 }
 
@@ -245,31 +221,35 @@ func SequenceEqual[T any](items []T, other []T) bool {
 	return true
 }
 
-// Reduce applies an accumulator function over an array. Starts with the default value of the type
+// Reduce applies an accumulator function over an array
 // items: The array to reduce
 // accumulator: The accumulator function to use
 func Reduce[T any](items []T, accumulator func(T, T) T) T {
-	var reduced T
-
-	for _, item := range items {
-		reduced = accumulator(reduced, item)
+	if len(items) == 0 {
+		var zero T
+		return zero
 	}
 
-	return reduced
+	result := items[0]
+	for _, item := range items[1:] {
+		result = accumulator(result, item)
+	}
+
+	return result
 }
 
-// ReduceWhere applies an accumulator function over an array. Starts with the specified value
+// ReduceWhere applies an accumulator function over an array, starting with the specified initial value
 // items: The array to reduce
 // initialValue: The value to start with
 // accumulator: The accumulator function to use
 func ReduceWhere[T any](items []T, initialValue T, accumulator func(T, T) T) T {
-	var reduced T
+	result := initialValue
 
 	for _, item := range items {
-		reduced = accumulator(reduced, item)
+		result = accumulator(result, item)
 	}
 
-	return reduced
+	return result
 }
 
 // Map projects each element of an array into a new form
@@ -319,14 +299,22 @@ func RemoveAt[T any](items []T, index int) []T {
 // items: The array to remove elements from
 // value: The value to remove from the array
 func Remove[T any](items []T, value T) []T {
-	return RemoveAt(items, IndexOf(items, value))
+	index := FindIndex(items, value)
+	if index != -1 {
+		return RemoveAt(items, index)
+	}
+	return items
 }
 
 // RemoveWhere removes the first element in the array that satisfies the predicate
 // items: The array to remove elements from
 // predicate: The predicate to test each element against
 func RemoveWhere[T any](items []T, predicate func(T) bool) []T {
-	return RemoveAt(items, FindIndexWhere(items, predicate))
+	index := FindIndexWhere(items, predicate)
+	if index != -1 {
+		return RemoveAt(items, index)
+	}
+	return items
 }
 
 // KeyWhere returns the a Map of the array where the key is the result of the selector function
@@ -399,14 +387,9 @@ func Slice[T any](items []T, start int, end int) []T {
 // items: The array to sort
 // comparer: The comparer function to use
 func SortWhere[T any](items []T, comparer func(T, T) bool) []T {
-	for i := 0; i < len(items)-1; i++ {
-		for j := i + 1; j < len(items); j++ {
-			if comparer(items[i], items[j]) {
-				items[i], items[j] = items[j], items[i]
-			}
-		}
-	}
-
+	sort.Slice(items, func(i, j int) bool {
+		return comparer(items[i], items[j])
+	})
 	return items
 }
 
@@ -534,7 +517,10 @@ func ReplaceAllWhere[T any](items []T, value T, predicate func(T) bool) []T {
 // oldValue: The value to replace
 // newValue: The value to replace with
 func Replace[T any](items []T, oldValue T, newValue T) []T {
-	items[IndexOf(items, oldValue)] = newValue
+	index := FindIndex(items, oldValue)
+	if index != -1 {
+		items[index] = newValue
+	}
 	return items
 }
 
@@ -543,7 +529,10 @@ func Replace[T any](items []T, oldValue T, newValue T) []T {
 // value: The value to replace with
 // predicate: The selector function to use
 func ReplaceWhere[T any](items []T, value T, predicate func(T) bool) []T {
-	items[FindIndexWhere(items, predicate)] = value
+	index := FindIndexWhere(items, predicate)
+	if index != -1 {
+		items[index] = value
+	}
 	return items
 }
 
@@ -557,6 +546,10 @@ func Push[T any](items []T, item T) []T {
 // Pop removes the last element from an array and returns it
 // items: The array to remove the element from
 func Pop[T any](items []T) (T, []T) {
+	if len(items) == 0 {
+		var zero T
+		return zero, items
+	}
 	return items[len(items)-1], items[:len(items)-1]
 }
 
@@ -570,12 +563,20 @@ func Unshift[T any](items []T, item T) []T {
 // Shift removes the first element from an array and returns it
 // items: The array to remove the element from
 func Shift[T any](items []T) (T, []T) {
+	if len(items) == 0 {
+		var zero T
+		return zero, items
+	}
 	return items[0], items[1:]
 }
 
 // Last returns the last element in an array
 // items: The array to get the last element from
 func Last[T any](items []T) T {
+	if len(items) == 0 {
+		var zero T
+		return zero
+	}
 	return items[len(items)-1]
 }
 
@@ -587,4 +588,124 @@ func First[T any](items []T) T {
 		item = items[0]
 	}
 	return item
+}
+
+// Sum returns the sum of all elements in an array
+// items: The array to sum
+func Sum[T int | int32 | int64 | float32 | float64](items []T) T {
+	var sum T
+	for _, item := range items {
+		sum += item
+	}
+	return sum
+}
+
+// Average returns the average of all elements in an array
+// items: The array to average
+func Average[T int | int32 | int64 | float32 | float64](items []T) float64 {
+	if len(items) == 0 {
+		return 0
+	}
+	sum := Sum(items)
+	return float64(sum) / float64(len(items))
+}
+
+// Min returns the minimum value in an array
+// items: The array to get the minimum value from
+func Min[T int | int32 | int64 | float32 | float64](items []T) T {
+	if len(items) == 0 {
+		var zero T
+		return zero
+	}
+	min := items[0]
+	for _, item := range items[1:] {
+		if item < min {
+			min = item
+		}
+	}
+	return min
+}
+
+// Max returns the maximum value in an array
+// items: The array to get the maximum value from
+func Max[T int | int32 | int64 | float32 | float64](items []T) T {
+	if len(items) == 0 {
+		var zero T
+		return zero
+	}
+	max := items[0]
+	for _, item := range items[1:] {
+		if item > max {
+			max = item
+		}
+	}
+	return max
+}
+
+// Partition splits an array into two arrays based on a predicate
+// items: The array to partition
+// predicate: The predicate to test each element against
+func Partition[T any](items []T, predicate func(T) bool) ([]T, []T) {
+	var trueItems, falseItems []T
+	for _, item := range items {
+		if predicate(item) {
+			trueItems = append(trueItems, item)
+		} else {
+			falseItems = append(falseItems, item)
+		}
+	}
+	return trueItems, falseItems
+}
+
+// Zip combines two arrays into a new array using a selector function
+// items: The array to combine
+// other: The array to combine
+// selector: The selector function to use
+func Zip[T any, U any, V any](items []T, other []U, selector func(T, U) V) []V {
+	minLen := len(items)
+	if len(other) < minLen {
+		minLen = len(other)
+	}
+	zipped := make([]V, minLen)
+	for i := 0; i < minLen; i++ {
+		zipped[i] = selector(items[i], other[i])
+	}
+	return zipped
+}
+
+// All determines whether all elements of an array satisfy a condition
+// items: The array to search
+// predicate: The predicate to test each element against
+func All[T any](items []T, predicate func(T) bool) bool {
+	for _, item := range items {
+		if !predicate(item) {
+			return false
+		}
+	}
+	return true
+}
+
+// Any determines whether any element of an array satisfies a condition
+// items: The array to search
+// predicate: The predicate to test each element against
+func Any[T any](items []T, predicate func(T) bool) bool {
+	for _, item := range items {
+		if predicate(item) {
+			return true
+		}
+	}
+	return false
+}
+
+// Count returns the number of elements in an array that satisfy a condition
+// items: The array to search
+// predicate: The predicate to test each element against
+func Count[T any](items []T, predicate func(T) bool) int {
+	count := 0
+	for _, item := range items {
+		if predicate(item) {
+			count++
+		}
+	}
+	return count
 }

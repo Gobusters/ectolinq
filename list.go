@@ -71,22 +71,12 @@ func (l List[T]) FindLastIndexWhere(predicate func(T) bool) int {
 	return FindLastIndexWhere(l, predicate)
 }
 
-// IndexOf returns the index of the first occurrence of a value in the array
-// value: The value to locate in the array
-func (l List[T]) IndexOf(value T) int {
-	return IndexOf(l, value)
-}
-
-// LastIndexOf returns the index of the last occurrence of a value in the array
-// value: The value to locate in the array
-func (l List[T]) LastIndexOf(value T) int {
-	return LastIndexOf(l, value)
-}
-
 // Contains determines whether an array contains a specific value
 // value: The value to locate in the array
 func (l List[T]) Contains(value T) bool {
-	return Contains(l, value)
+	return Any(l, func(item T) bool {
+		return Equals(item, value)
+	})
 }
 
 // All determines whether all elements of an array satisfy a condition
@@ -109,25 +99,40 @@ func (l List[T]) Count(predicate func(T) bool) int {
 
 // Distinct returns distinct elements from an array
 func (l List[T]) Distinct() List[T] {
-	return Distinct(l)
+	var result List[T]
+	for _, item := range l {
+		if !result.Contains(item) {
+			result = append(result, item)
+		}
+	}
+	return result
 }
 
 // Except returns the elements of an array that do not appear in a second array
 // other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
 func (l List[T]) Except(other []T) List[T] {
-	return Except(l, other)
+	return Filter(l, func(item T) bool {
+		return !l.Contains(item)
+	})
 }
 
 // Intersect returns the elements that appear in two arrays
 // other: The array whose distinct elements that also appear in the first array will be returned
 func (l List[T]) Intersect(other []T) List[T] {
-	return Intersect(l, other)
+	return Filter(l, func(item T) bool {
+		return l.Contains(item)
+	})
 }
 
 // Union returns the elements that appear in either of two arrays
 // other: The second array to search
 func (l List[T]) Union(other []T) List[T] {
-	return Union(l, other)
+	return l.Distinct().Concat(From(other).Distinct())
+}
+
+// Concat concatenates two lists
+func (l List[T]) Concat(other List[T]) List[T] {
+	return append(l, other...)
 }
 
 // SequenceEqual determines whether two arrays are equal
@@ -296,4 +301,14 @@ func (l List[T]) Last() T {
 // First returns the first element in the array
 func (l List[T]) First() T {
 	return First(l)
+}
+
+// Partition splits an array into two arrays based on a predicate
+func (l List[T]) Partition(predicate func(T) bool) (List[T], List[T]) {
+	return Partition(l, predicate)
+}
+
+// Zip combines two arrays into a new array using a selector function
+func (l List[T]) Zip(other []T, selector func(T, T) T) List[T] {
+	return Zip(l, other, selector)
 }

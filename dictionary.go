@@ -12,6 +12,13 @@ func NewDictionary[T any]() *Dictionary[T] {
 	}
 }
 
+// Add a constructor that takes an initial capacity
+func NewDictionaryWithCapacity[T any](capacity int) *Dictionary[T] {
+	return &Dictionary[T]{
+		values: make(map[string]T, capacity),
+	}
+}
+
 // ToDictionary creates a new dictionary from a map
 // m: The map to create the dictionary from
 func ToDictionary[T any](m map[string]T) *Dictionary[T] {
@@ -104,11 +111,29 @@ func (d *Dictionary[T]) RemoveWhere(fn func(string, T) bool) {
 	}
 }
 
-// Clear removes all values from the dictionary
-func (d *Dictionary[T]) Clear() {
-	for key := range d.values {
-		delete(d.values, key)
+// Modify the Merge method to return the modified dictionary
+func (d *Dictionary[T]) Merge(dicts ...Dictionary[T]) *Dictionary[T] {
+	for _, dict := range dicts {
+		for key, value := range dict.values {
+			d.values[key] = value
+		}
 	}
+	return d
+}
+
+// MergeMaps merges the given maps into the dictionary
+// maps: The maps to merge
+func (d *Dictionary[T]) MergeMaps(maps ...map[string]T) {
+	for _, m := range maps {
+		for key, value := range m {
+			d.values[key] = value
+		}
+	}
+}
+
+// Optimize the Clear method
+func (d *Dictionary[T]) Clear() {
+	d.values = make(map[string]T)
 }
 
 // Count returns the number of values in the dictionary
@@ -138,22 +163,7 @@ func (d *Dictionary[T]) ToMap() map[string]T {
 	return d.values
 }
 
-// Merge merges the given dictionaries into the dictionary
-// dicts: The dictionaries to merge
-func (d *Dictionary[T]) Merge(dicts ...Dictionary[T]) {
-	for _, dict := range dicts {
-		for key, value := range dict.values {
-			d.values[key] = value
-		}
-	}
-}
-
-// MergeMaps merges the given maps into the dictionary
-// maps: The maps to merge
-func (d *Dictionary[T]) MergeMaps(maps ...map[string]T) {
-	for _, m := range maps {
-		for key, value := range m {
-			d.values[key] = value
-		}
-	}
+// Add a method to get all values
+func (d *Dictionary[T]) Values() []T {
+	return d.ToArray()
 }

@@ -9,15 +9,15 @@ import (
 // items: The array to search
 // predicate: The predicate to test each element against
 func Find[T any](items []T, predicate func(T) bool) T {
-	var item T
+	var result T
 
-	for _, item = range items {
+	for _, item := range items {
 		if predicate(item) {
 			return item
 		}
 	}
 
-	return item
+	return result
 }
 
 // Reverse reverses the order of the elements in the array in-place
@@ -397,6 +397,12 @@ func SortWhere[T any](items []T, comparer func(T, T) bool) []T {
 // items: The array to take elements from
 // count: The number of elements to take
 func Take[T any](items []T, count int) []T {
+	if len(items) == 0 {
+		return []T{}
+	}
+	if count > len(items) {
+		count = len(items)
+	}
 	return items[:count]
 }
 
@@ -428,6 +434,12 @@ func TakeWhile[T any](items []T, predicate func(T) bool) []T {
 // items: The array to skip elements from
 // count: The number of elements to skip
 func Skip[T any](items []T, count int) []T {
+	if len(items) == 0 {
+		return []T{}
+	}
+	if count > len(items) {
+		count = len(items)
+	}
 	return items[count:]
 }
 

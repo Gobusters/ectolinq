@@ -111,23 +111,26 @@ func (l List[T]) Distinct() List[T] {
 // Except returns the elements of an array that do not appear in a second array
 // other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
 func (l List[T]) Except(other []T) List[T] {
+	otherList := From(other)
 	return Filter(l, func(item T) bool {
-		return !l.Contains(item)
+		return !otherList.Contains(item)
 	})
 }
 
 // Intersect returns the elements that appear in two arrays
 // other: The array whose distinct elements that also appear in the first array will be returned
 func (l List[T]) Intersect(other []T) List[T] {
+	otherList := From(other)
 	return Filter(l, func(item T) bool {
-		return l.Contains(item)
+		return otherList.Contains(item)
 	})
 }
 
 // Union returns the elements that appear in either of two arrays
 // other: The second array to search
 func (l List[T]) Union(other []T) List[T] {
-	return l.Distinct().Concat(From(other).Distinct())
+	otherList := From(other)
+	return l.Concat(otherList).Distinct()
 }
 
 // Concat concatenates two lists

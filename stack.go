@@ -1,5 +1,7 @@
 package ectolinq
 
+import "fmt"
+
 type Stack[T any] struct {
 	items List[T]
 }
@@ -11,9 +13,8 @@ func NewStack[T any]() *Stack[T] {
 	}
 }
 
-// ToStack creates a new stack from an array
-// items: The array to create the stack from
-func ToStack[T any](items []T) *Stack[T] {
+// Rename ToStack to FromSlice for consistency
+func FromSlice[T any](items []T) *Stack[T] {
 	return &Stack[T]{
 		items: items,
 	}
@@ -22,19 +23,27 @@ func ToStack[T any](items []T) *Stack[T] {
 // Push pushes an item onto the stack
 // item: The item to push
 func (s *Stack[T]) Push(item T) {
-	s.items.Push(item)
+	s.items = s.items.Push(item)
 }
 
 // Pop removes and returns the item on the top of the stack
-func (s *Stack[T]) Pop() T {
+func (s *Stack[T]) Pop() (T, error) {
+	if s.Count() == 0 {
+		var zero T
+		return zero, fmt.Errorf("cannot pop from an empty stack")
+	}
 	item, items := s.items.Pop()
 	s.items = items
-	return item
+	return item, nil
 }
 
 // Peek returns an element that is at the top of the stack without removing it
-func (s *Stack[T]) Peek() T {
-	return s.items.Last()
+func (s *Stack[T]) Peek() (T, error) {
+	if s.Count() == 0 {
+		var zero T
+		return zero, fmt.Errorf("cannot peek an empty stack")
+	}
+	return s.items.Last(), nil
 }
 
 // Count returns the number of items in the stack

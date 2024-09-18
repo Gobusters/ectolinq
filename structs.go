@@ -6,9 +6,8 @@ import (
 	"strings"
 )
 
-// Equals returns if two values are equal
-// a: The first value
-// b: The second value
+// Equals compares two values for equality.
+// It uses reflect.DeepEqual for the comparison.
 func Equals[T any](a T, b T) bool {
 	defer func() {
 		recover()
@@ -16,8 +15,8 @@ func Equals[T any](a T, b T) bool {
 	return reflect.DeepEqual(a, b)
 }
 
-// IsEmpty returns if a value is empty
-// val: The value to check
+// IsEmpty checks if a value is considered empty.
+// It handles various types including slices, maps, strings, channels, pointers, and interfaces.
 func IsEmpty[T any](val T) bool {
 	defer func() {
 		recover()
@@ -64,6 +63,9 @@ func Get(s any, path string) (any, error) {
 
 	// If s is a pointer, get the value it points to
 	if r.Kind() == reflect.Ptr {
+		if r.IsNil() {
+			return nil, fmt.Errorf("cannot get field from nil pointer")
+		}
 		r = r.Elem()
 	}
 
@@ -81,6 +83,9 @@ func Get(s any, path string) (any, error) {
 
 		// If it's a pointer, resolve it
 		if r.Kind() == reflect.Ptr {
+			if r.IsNil() {
+				return nil, fmt.Errorf("nil pointer encountered in path: %s", part)
+			}
 			r = r.Elem()
 		}
 	}
@@ -116,12 +121,17 @@ func Set(s any, path string, value any) error {
 			field.Set(reflect.ValueOf(value))
 			return nil
 		}
-		r = r.FieldByName(part)
-		if !r.IsValid() {
+		field := r.FieldByName(part)
+		if !field.IsValid() {
 			return fmt.Errorf("field not found in path: %s", part)
 		}
-		if r.Kind() == reflect.Ptr {
-			r = r.Elem()
+		if field.Kind() == reflect.Ptr {
+			if field.IsNil() {
+				return fmt.Errorf("nil pointer encountered in path: %s", part)
+			}
+			r = field.Elem()
+		} else {
+			r = field
 		}
 	}
 	return nil

@@ -12,8 +12,8 @@ func (l List[T]) Length() int {
 	return len(l)
 }
 
-// From returns a List from an array
-func From[T any](items []T) List[T] {
+// ToList returns a List from an array
+func ToList[T any](items []T) List[T] {
 	return items
 }
 
@@ -111,7 +111,7 @@ func (l List[T]) Distinct() List[T] {
 // Except returns the elements of an array that do not appear in a second array
 // other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
 func (l List[T]) Except(other []T) List[T] {
-	otherList := From(other)
+	otherList := ToList(other)
 	return Filter(l, func(item T) bool {
 		return !otherList.Contains(item)
 	})
@@ -120,7 +120,7 @@ func (l List[T]) Except(other []T) List[T] {
 // Intersect returns the elements that appear in two arrays
 // other: The array whose distinct elements that also appear in the first array will be returned
 func (l List[T]) Intersect(other []T) List[T] {
-	otherList := From(other)
+	otherList := ToList(other)
 	return Filter(l, func(item T) bool {
 		return otherList.Contains(item)
 	})
@@ -129,7 +129,7 @@ func (l List[T]) Intersect(other []T) List[T] {
 // Union returns the elements that appear in either of two arrays
 // other: The second array to search
 func (l List[T]) Union(other []T) List[T] {
-	otherList := From(other)
+	otherList := ToList(other)
 	return l.Concat(otherList).Distinct()
 }
 
@@ -277,7 +277,8 @@ func (l List[T]) ReplaceWhere(value T, predicate func(T) bool) List[T] {
 // Push adds an element to the end of the array
 // value: The value to push
 func (l List[T]) Push(value T) List[T] {
-	return Push(l, value)
+	l = Push(l, value)
+	return l
 }
 
 // Pop removes the last element from an array and returns it

@@ -168,37 +168,86 @@ func TestIfEmpty(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	s := testStruct{
-		Name: "Test",
-		Age:  30,
+	type deepNestedStruct struct {
+		DeepValue string
+	}
+
+	type complexStruct struct {
+		Name       string
+		Age        int
+		IsStudent  bool
+		GPA        float64
+		Courses    []string
+		Grades     map[string]int
+		Nested     nestedStruct
+		PtrNest    *nestedStruct
+		DeepNested deepNestedStruct
+		PtrDeep    *deepNestedStruct
+	}
+
+	s := complexStruct{
+		Name:      "Test",
+		Age:       30,
+		IsStudent: true,
+		GPA:       3.5,
+		Courses:   []string{"Math", "Science"},
+		Grades:    map[string]int{"Math": 90, "Science": 85},
 		Nested: nestedStruct{
 			Value: "NestedValue",
 		},
 		PtrNest: &nestedStruct{
 			Value: "PtrNestedValue",
 		},
+		DeepNested: deepNestedStruct{
+			DeepValue: "DeepNestedValue",
+		},
+		PtrDeep: &deepNestedStruct{
+			DeepValue: "PtrDeepNestedValue",
+		},
 	}
 
-	t.Run("Simple field", func(t *testing.T) {
-		result, err := Get(s, "Name")
-		require.NoError(t, err)
-		assert.Equal(t, "Test", result)
+	tests := []struct {
+		name     string
+		path     string
+		expected interface{}
+		hasError bool
+	}{
+		{"Simple string field", "Name", "Test", false},
+		{"Simple int field", "Age", 30, false},
+		{"Simple bool field", "IsStudent", true, false},
+		{"Simple float field", "GPA", 3.5, false},
+		{"Slice field", "Courses", []string{"Math", "Science"}, false},
+		{"Map field", "Grades", map[string]int{"Math": 90, "Science": 85}, false},
+		{"Nested struct field", "Nested.Value", "NestedValue", false},
+		{"Pointer to nested struct field", "PtrNest.Value", "PtrNestedValue", false},
+		{"Deep nested struct field", "DeepNested.DeepValue", "DeepNestedValue", false},
+		{"Pointer to deep nested struct field", "PtrDeep.DeepValue", "PtrDeepNestedValue", false},
+		{"Non-existent field", "NonExistent", nil, true},
+		{"Non-existent nested field", "Nested.NonExistent", nil, true},
+		{"Nil pointer field", "NonExistentPtr.Value", nil, true},
+		{"Empty path", "", nil, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := Get(s, tt.path)
+			if tt.hasError {
+				assert.Error(t, err)
+			} else {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expected, result)
+			}
+		})
+	}
+
+	t.Run("Nil struct pointer", func(t *testing.T) {
+		var nilPtr *complexStruct
+		_, err := Get(nilPtr, "Name")
+		assert.Error(t, err)
 	})
 
-	t.Run("Nested field", func(t *testing.T) {
-		result, err := Get(s, "Nested.Value")
-		require.NoError(t, err)
-		assert.Equal(t, "NestedValue", result)
-	})
-
-	t.Run("Pointer nested field", func(t *testing.T) {
-		result, err := Get(s, "PtrNest.Value")
-		require.NoError(t, err)
-		assert.Equal(t, "PtrNestedValue", result)
-	})
-
-	t.Run("Non-existent field", func(t *testing.T) {
-		_, err := Get(s, "NonExistent")
+	t.Run("Non-struct value", func(t *testing.T) {
+		_, err := Get(42, "SomeField")
 		assert.Error(t, err)
 	})
 }
@@ -222,6 +271,22 @@ func TestSet(t *testing.T) {
 		s := &testStruct{}
 		err := Set(s, "NonExistent", "Value")
 		assert.Error(t, err)
+	})
+
+	t.Run("Set nested pointer field", func(t *testing.T) {
+		s := &testStruct{
+			PtrNest: &nestedStruct{},
+		}
+		err := Set(s, "PtrNest.Value", "NewPointerValue")
+		require.NoError(t, err)
+		assert.Equal(t, "NewPointerValue", s.PtrNest.Value)
+	})
+
+	t.Run("Set nil nested pointer field", func(t *testing.T) {
+		s := &testStruct{}
+		err := Set(s, "PtrNest.Value", "NewPointerValue")
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "nil pointer encountered in path: PtrNest")
 	})
 }
 

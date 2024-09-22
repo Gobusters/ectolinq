@@ -130,7 +130,9 @@ func TestIsEmpty(t *testing.T) {
 	})
 
 	t.Run("Non-nil function", func(t *testing.T) {
-		f := func() {}
+		f := func() {
+			// This function is intentionally empty for testing purposes
+		}
 		assert.False(t, IsEmpty(f), "Expected non-nil function to not be empty")
 	})
 }

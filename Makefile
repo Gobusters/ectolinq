@@ -5,7 +5,7 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
-BINARY_NAME=your_binary_name
+BINARY_NAME=ectolinq
 
 # Linter
 GOLINT=golangci-lint

@@ -10,7 +10,7 @@ import (
 // It uses reflect.DeepEqual for the comparison.
 func Equals[T any](a T, b T) bool {
 	defer func() {
-		recover()
+		_ = recover()
 	}()
 	return reflect.DeepEqual(a, b)
 }
@@ -19,7 +19,7 @@ func Equals[T any](a T, b T) bool {
 // It handles various types including slices, maps, strings, channels, pointers, and interfaces.
 func IsEmpty[T any](val T) bool {
 	defer func() {
-		recover()
+		_ = recover()
 	}()
 	rv := reflect.ValueOf(val)
 	switch rv.Kind() {

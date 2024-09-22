@@ -216,3 +216,135 @@ func TestForEachEntry(t *testing.T) {
 		assert.Equal(t, 0, count)
 	})
 }
+
+func TestMerge(t *testing.T) {
+	t.Run("merge two maps", func(t *testing.T) {
+		m1 := map[string]int{"a": 1, "b": 2}
+		m2 := map[string]int{"b": 3, "c": 4}
+		merged := Merge(m1, m2)
+		assert.Equal(t, map[string]int{"a": 1, "b": 3, "c": 4}, merged)
+	})
+
+	t.Run("merge multiple maps", func(t *testing.T) {
+		m1 := map[string]int{"a": 1}
+		m2 := map[string]int{"b": 2}
+		m3 := map[string]int{"c": 3}
+		merged := Merge(m1, m2, m3)
+		assert.Equal(t, map[string]int{"a": 1, "b": 2, "c": 3}, merged)
+	})
+
+	t.Run("merge with empty map", func(t *testing.T) {
+		m1 := map[string]int{"a": 1, "b": 2}
+		m2 := map[string]int{}
+		merged := Merge(m1, m2)
+		assert.Equal(t, map[string]int{"a": 1, "b": 2}, merged)
+	})
+}
+
+func TestCountEntries(t *testing.T) {
+	t.Run("count even values", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		count := CountEntries(m, func(key string, value int) bool {
+			return value%2 == 0
+		})
+		assert.Equal(t, 2, count)
+	})
+
+	t.Run("count all", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		count := CountEntries(m, func(key string, value int) bool {
+			return true
+		})
+		assert.Equal(t, 2, count)
+	})
+
+	t.Run("count none", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		count := CountEntries(m, func(key string, value int) bool {
+			return false
+		})
+		assert.Equal(t, 0, count)
+	})
+}
+
+func TestGroupBy(t *testing.T) {
+	t.Run("group by value parity", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		grouped := GroupBy(m, func(k string, v int) string {
+			if v%2 == 0 {
+				return "even"
+			}
+			return "odd"
+		})
+		assert.Len(t, grouped, 2)
+		assert.Len(t, grouped["even"], 2)
+		assert.Len(t, grouped["odd"], 2)
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		grouped := GroupBy(m, func(k string, v int) string {
+			return "group"
+		})
+		assert.Empty(t, grouped)
+	})
+}
+
+func TestInvert(t *testing.T) {
+	t.Run("invert map", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3}
+		inverted := Invert(m)
+		assert.Equal(t, map[int]string{1: "a", 2: "b", 3: "c"}, inverted)
+	})
+
+	t.Run("empty map", func(t *testing.T) {
+		m := map[string]int{}
+		inverted := Invert(m)
+		assert.Empty(t, inverted)
+	})
+}
+
+func TestPick(t *testing.T) {
+	t.Run("pick existing keys", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		picked := Pick(m, "a", "c")
+		assert.Equal(t, map[string]int{"a": 1, "c": 3}, picked)
+	})
+
+	t.Run("pick non-existing keys", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		picked := Pick(m, "c", "d")
+		assert.Empty(t, picked)
+	})
+}
+
+func TestOmit(t *testing.T) {
+	t.Run("omit existing keys", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2, "c": 3, "d": 4}
+		omitted := Omit(m, "a", "c")
+		assert.Equal(t, map[string]int{"b": 2, "d": 4}, omitted)
+	})
+
+	t.Run("omit non-existing keys", func(t *testing.T) {
+		m := map[string]int{"a": 1, "b": 2}
+		omitted := Omit(m, "c", "d")
+		assert.Equal(t, map[string]int{"a": 1, "b": 2}, omitted)
+	})
+}
+
+func TestContainsValue(t *testing.T) {
+	t.Run("contains element", func(t *testing.T) {
+		slice := []int{1, 2, 3, 4, 5}
+		assert.True(t, ContainsValue(slice, 3))
+	})
+
+	t.Run("does not contain element", func(t *testing.T) {
+		slice := []int{1, 2, 3, 4, 5}
+		assert.False(t, ContainsValue(slice, 6))
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		var slice []int
+		assert.False(t, ContainsValue(slice, 1))
+	})
+}

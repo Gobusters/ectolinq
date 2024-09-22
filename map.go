@@ -120,3 +120,76 @@ func ForEachEntry[K comparable, V any](m map[K]V, f func(key K, value V)) {
 		f(k, v)
 	}
 }
+
+// Merge combines two or more maps into a new map
+func Merge[K comparable, V any](maps ...map[K]V) map[K]V {
+	result := make(map[K]V)
+	for _, m := range maps {
+		for k, v := range m {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+// CountEntries returns the number of key-value pairs in the map that satisfy the predicate
+func CountEntries[K comparable, V any](m map[K]V, predicate func(key K, value V) bool) int {
+	count := 0
+	for k, v := range m {
+		if predicate(k, v) {
+			count++
+		}
+	}
+	return count
+}
+
+// GroupBy groups the map entries by a key selector function
+func GroupBy[K comparable, V any, G comparable](m map[K]V, keySelector func(K, V) G) map[G][]MapEntry[K, V] {
+	result := make(map[G][]MapEntry[K, V])
+	for k, v := range m {
+		group := keySelector(k, v)
+		result[group] = append(result[group], MapEntry[K, V]{Key: k, Value: v})
+	}
+	return result
+}
+
+// Invert swaps the keys and values of the map
+func Invert[K comparable, V comparable](m map[K]V) map[V]K {
+	result := make(map[V]K)
+	for k, v := range m {
+		result[v] = k
+	}
+	return result
+}
+
+// Pick creates a new map with only the specified keys
+func Pick[K comparable, V any](m map[K]V, keys ...K) map[K]V {
+	result := make(map[K]V)
+	for _, k := range keys {
+		if v, ok := m[k]; ok {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+// Omit creates a new map without the specified keys
+func Omit[K comparable, V any](m map[K]V, keys ...K) map[K]V {
+	result := make(map[K]V)
+	for k, v := range m {
+		if !ContainsValue(keys, k) {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+// ContainsValue checks if a slice contains a specific element
+func ContainsValue[T comparable](slice []T, element T) bool {
+	for _, v := range slice {
+		if v == element {
+			return true
+		}
+	}
+	return false
+}

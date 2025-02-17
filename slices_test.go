@@ -423,3 +423,29 @@ func TestAny(t *testing.T) {
 		assert.False(t, result, "Should return false for empty slice")
 	})
 }
+
+func TestAt(t *testing.T) {
+	t.Run("Get element at index", func(t *testing.T) {
+		items := []int{1, 2, 3, 4, 5}
+		result := At(items, 2)
+		assert.Equal(t, 3, result, "Should return element at index 2")
+	})
+
+	t.Run("Get element at index out of bounds", func(t *testing.T) {
+		items := []int{1, 2, 3, 4, 5}
+		result := At(items, 10)
+		assert.Equal(t, 0, result, "Should return zero value for out of bounds index")
+	})
+
+	t.Run("Get element at negative index", func(t *testing.T) {
+		items := []int{1, 2, 3, 4, 5}
+		result := At(items, -1)
+		assert.Equal(t, 0, result, "Should return zero value for negative index")
+	})
+
+	t.Run("Get element at index of empty slice", func(t *testing.T) {
+		var items []int
+		result := At(items, 0)
+		assert.Equal(t, 0, result, "Should return zero value for empty slice")
+	})
+}

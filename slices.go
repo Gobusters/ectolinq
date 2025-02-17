@@ -5,8 +5,8 @@ import (
 	"sort"
 )
 
-// Find returns the first element in the array that satisfies the predicate
-// items: The array to search
+// Find returns the first element in the slice that satisfies the predicate
+// items: The slice to search
 // predicate: The predicate to test each element against
 func Find[T any](items []T, predicate func(T) bool) T {
 	var result T
@@ -20,8 +20,8 @@ func Find[T any](items []T, predicate func(T) bool) T {
 	return result
 }
 
-// Reverse reverses the order of the elements in the array in-place
-// items: The array to reverse
+// Reverse reverses the order of the elements in the slice in-place
+// items: The slice to reverse
 func Reverse[T any](items []T) []T {
 	// Consider using a more efficient in-place reversal
 	for i := 0; i < len(items)/2; i++ {
@@ -31,9 +31,9 @@ func Reverse[T any](items []T) []T {
 	return items
 }
 
-// FindIndex returns the index of the first occurrence of a value in the array
-// items: The array to search
-// value: The value to locate in the array
+// FindIndex returns the index of the first occurrence of a value in the slice
+// items: The slice to search
+// value: The value to locate in the slice
 func FindIndex[T any](items []T, value T) int {
 	for index, item := range items {
 		if Equals(item, value) {
@@ -43,8 +43,8 @@ func FindIndex[T any](items []T, value T) int {
 	return -1
 }
 
-// FindIndexWhere returns the index of the first element in the array that satisfies the predicate
-// items: The array to search
+// FindIndexWhere returns the index of the first element in the slice that satisfies the predicate
+// items: The slice to search
 // predicate: The predicate to test each element against
 func FindIndexWhere[T any](items []T, predicate func(T) bool) int {
 	for index, item := range items {
@@ -56,8 +56,8 @@ func FindIndexWhere[T any](items []T, predicate func(T) bool) int {
 	return -1
 }
 
-// FindLast returns the last element in the array that satisfies the predicate
-// items: The array to search
+// FindLast returns the last element in the slice that satisfies the predicate
+// items: The slice to search
 // predicate: The predicate to test each element against
 func FindLast[T any](items []T, val T) T {
 	// Instead of reversing the slice, consider iterating from the end
@@ -70,8 +70,8 @@ func FindLast[T any](items []T, val T) T {
 	return zero
 }
 
-// FindLastWhere returns the last element in the array that satisfies the predicate
-// items: The array to search
+// FindLastWhere returns the last element in the slice that satisfies the predicate
+// items: The slice to search
 // predicate: The predicate to test each element against
 func FindLastWhere[T any](items []T, predicate func(T) bool) T {
 	var item T
@@ -85,9 +85,9 @@ func FindLastWhere[T any](items []T, predicate func(T) bool) T {
 	return item
 }
 
-// FindLastIndex returns the index of the last occurrence of a value in the array
-// items: The array to search
-// value: The value to locate in the array
+// FindLastIndex returns the index of the last occurrence of a value in the slice
+// items: The slice to search
+// value: The value to locate in the slice
 func FindLastIndex[T any](items []T, value T) int {
 	for i := len(items) - 1; i >= 0; i-- {
 		if Equals(items[i], value) {
@@ -97,8 +97,8 @@ func FindLastIndex[T any](items []T, value T) int {
 	return -1
 }
 
-// FindLastIndexWhere returns the index of the last element in the array that satisfies the predicate
-// items: The array to search
+// FindLastIndexWhere returns the index of the last element in the slice that satisfies the predicate
+// items: The slice to search
 // predicate: The predicate to test each element against
 func FindLastIndexWhere[T any](items []T, predicate func(T) bool) int {
 	for i := len(items) - 1; i >= 0; i-- {
@@ -109,9 +109,9 @@ func FindLastIndexWhere[T any](items []T, predicate func(T) bool) int {
 	return -1
 }
 
-// Contains determines whether an array contains a specific value
-// items: The array to search
-// value: The value to locate in the array
+// Contains determines whether an slice contains a specific value
+// items: The slice to search
+// value: The value to locate in the slice
 func Contains[T comparable](items []T, value T) bool {
 	for _, item := range items {
 		if item == value {
@@ -121,8 +121,8 @@ func Contains[T comparable](items []T, value T) bool {
 	return false
 }
 
-// Distinct returns distinct elements from an array
-// items: The array to search
+// Distinct returns distinct elements from an slice
+// items: The slice to search
 func Distinct[T comparable](items []T) []T {
 	seen := make(map[T]struct{}, len(items))
 	results := make([]T, 0, len(items))
@@ -137,8 +137,8 @@ func Distinct[T comparable](items []T) []T {
 	return results
 }
 
-// DistinctBy returns distinct elements from an array based on a key selector
-// items: The array to search
+// DistinctBy returns distinct elements from an slice based on a key selector
+// items: The slice to search
 // keySelector: The function to extract the key from each element
 func DistinctBy[T any, U comparable](items []T, keySelector func(T) U) []T {
 	seen := make(map[U]struct{}, len(items))
@@ -155,9 +155,9 @@ func DistinctBy[T any, U comparable](items []T, keySelector func(T) U) []T {
 	return results
 }
 
-// Except returns the elements of an array that do not appear in a second array
-// items: The array to search
-// other: The array whose elements that also occur in the first array will cause those elements to be removed from the returned array
+// Except returns the elements of an slice that do not appear in a second slice
+// items: The slice to search
+// other: The slice whose elements that also occur in the first slice will cause those elements to be removed from the returned slice
 func Except[T comparable](items []T, other []T) []T {
 	otherSet := make(map[T]struct{}, len(other))
 	for _, item := range other {
@@ -174,9 +174,9 @@ func Except[T comparable](items []T, other []T) []T {
 	return except
 }
 
-// Intersect returns the elements that appear in two arrays
-// items: The array to search
-// other: The array whose distinct elements that also appear in the first array will be returned
+// Intersect returns the elements that appear in two slices
+// items: The slice to search
+// other: The slice whose distinct elements that also appear in the first slice will be returned
 func Intersect[T comparable](items []T, other []T) []T {
 	otherSet := make(map[T]struct{}, len(other))
 	for _, item := range other {
@@ -197,16 +197,16 @@ func Intersect[T comparable](items []T, other []T) []T {
 	return intersect
 }
 
-// Union returns the elements that appear in either of two arrays
-// items: The first array to search
-// other: The second array to search
+// Union returns the elements that appear in either of two slices
+// items: The first slice to search
+// other: The second slice to search
 func Union[T comparable](items []T, other []T) []T {
 	return Distinct(append(items, other...))
 }
 
-// SequenceEqual determines whether two arrays are equal
-// items: The first array to compare
-// other: The second array to compare
+// SequenceEqual determines whether two slices are equal
+// items: The first slice to compare
+// other: The second slice to compare
 func SequenceEqual[T any](items []T, other []T) bool {
 	if len(items) != len(other) {
 		return false
@@ -221,8 +221,8 @@ func SequenceEqual[T any](items []T, other []T) bool {
 	return true
 }
 
-// Reduce applies an accumulator function over an array
-// items: The array to reduce
+// Reduce applies an accumulator function over an slice
+// items: The slice to reduce
 // accumulator: The accumulator function to use
 func Reduce[T any](items []T, accumulator func(T, T) T) T {
 	if len(items) == 0 {
@@ -238,8 +238,8 @@ func Reduce[T any](items []T, accumulator func(T, T) T) T {
 	return result
 }
 
-// ReduceWhere applies an accumulator function over an array, starting with the specified initial value
-// items: The array to reduce
+// ReduceWhere applies an accumulator function over an slice, starting with the specified initial value
+// items: The slice to reduce
 // initialValue: The value to start with
 // accumulator: The accumulator function to use
 func ReduceWhere[T any](items []T, initialValue T, accumulator func(T, T) T) T {
@@ -252,8 +252,8 @@ func ReduceWhere[T any](items []T, initialValue T, accumulator func(T, T) T) T {
 	return result
 }
 
-// Map projects each element of an array into a new form
-// items: The array to map
+// Map projects each element of an slice into a new form
+// items: The slice to map
 // selector: The selector function to use
 func Map[T any, U any](items []T, selector func(T) U) []U {
 	var mapped []U
@@ -265,8 +265,8 @@ func Map[T any, U any](items []T, selector func(T) U) []U {
 	return mapped
 }
 
-// Filter removes all elements from an array that satisfy the predicate
-// items: The array to filter
+// Filter removes all elements from an slice that satisfy the predicate
+// items: The slice to filter
 // predicate: The predicate to test each element against
 func Filter[T any](items []T, predicate func(T) bool) []T {
 	var filtered []T
@@ -280,8 +280,8 @@ func Filter[T any](items []T, predicate func(T) bool) []T {
 	return filtered
 }
 
-// ForEach performs the specified action on each element of an array
-// items: The array to iterate
+// ForEach performs the specified action on each element of an slice
+// items: The slice to iterate
 // action: The action to perform on each element
 func ForEach[T any](items []T, action func(T)) {
 	for _, item := range items {
@@ -289,15 +289,15 @@ func ForEach[T any](items []T, action func(T)) {
 	}
 }
 
-// RemoveAt removes an element from an array at the specified index
-// items: The array to remove elements from
+// RemoveAt removes an element from an slice at the specified index
+// items: The slice to remove elements from
 func RemoveAt[T any](items []T, index int) []T {
 	return append(items[:index], items[index+1:]...)
 }
 
-// Remove removes the first occurrence of a specific object from an array
-// items: The array to remove elements from
-// value: The value to remove from the array
+// Remove removes the first occurrence of a specific object from an slice
+// items: The slice to remove elements from
+// value: The value to remove from the slice
 func Remove[T any](items []T, value T) []T {
 	index := FindIndex(items, value)
 	if index != -1 {
@@ -306,8 +306,8 @@ func Remove[T any](items []T, value T) []T {
 	return items
 }
 
-// RemoveWhere removes the first element in the array that satisfies the predicate
-// items: The array to remove elements from
+// RemoveWhere removes the first element in the slice that satisfies the predicate
+// items: The slice to remove elements from
 // predicate: The predicate to test each element against
 func RemoveWhere[T any](items []T, predicate func(T) bool) []T {
 	index := FindIndexWhere(items, predicate)
@@ -317,8 +317,8 @@ func RemoveWhere[T any](items []T, predicate func(T) bool) []T {
 	return items
 }
 
-// KeyWhere returns the a Map of the array where the key is the result of the selector function
-// items: The array to convert to a Map
+// KeyWhere returns the a Map of the slice where the key is the result of the selector function
+// items: The slice to convert to a Map
 // selector: The selector function to use
 func KeyWhere[T any, U comparable](items []T, selector func(T) U) map[U]T {
 	var key = make(map[U]T)
@@ -330,8 +330,8 @@ func KeyWhere[T any, U comparable](items []T, selector func(T) U) map[U]T {
 	return key
 }
 
-// Key returns the a Map of the array where the key is the value of the field at the specified path
-// items: The array to convert to a Map
+// Key returns the a Map of the slice where the key is the value of the field at the specified path
+// items: The slice to convert to a Map
 // path: The path to the field to use as the key. If the field is not found, the item will not be added to the Map
 func Key[T any, U comparable](items []T, path string) map[U]T {
 	return KeyWhere(items, func(item T) U {
@@ -341,8 +341,8 @@ func Key[T any, U comparable](items []T, path string) map[U]T {
 	})
 }
 
-// GroupWhere returns the a Map of the array where the key is the result of the selector function and the value is an array of all the elements that match the key
-// items: The array to convert to a Map
+// GroupWhere returns the a Map of the slice where the key is the result of the selector function and the value is an slice of all the elements that match the key
+// items: The slice to convert to a Map
 // selector: The selector function to use
 func GroupWhere[T any, U comparable](items []T, selector func(T) U) map[U][]T {
 	var key = make(map[U][]T)
@@ -354,8 +354,8 @@ func GroupWhere[T any, U comparable](items []T, selector func(T) U) map[U][]T {
 	return key
 }
 
-// Group returns the a Map of the array where the key is the value of the field at the specified path and the value is an array of all the elements that match the key
-// items: The array to convert to a Map
+// Group returns the a Map of the slice where the key is the value of the field at the specified path and the value is an slice of all the elements that match the key
+// items: The slice to convert to a Map
 // path: The path to the field to use as the key. If the field is not found, the item will not be added to the Map
 func Group[T any, U comparable](items []T, path string) map[U][]T {
 	return GroupWhere(items, func(item T) U {
@@ -365,8 +365,8 @@ func Group[T any, U comparable](items []T, path string) map[U][]T {
 	})
 }
 
-// Randomize returns a new array with the elements in a random order
-// items: The array to randomize
+// Randomize returns a new slice with the elements in a random order
+// items: The slice to randomize
 func Randomize[T any](items []T) []T {
 	rand.Shuffle(len(items), func(i, j int) {
 		items[i], items[j] = items[j], items[i]
@@ -375,16 +375,16 @@ func Randomize[T any](items []T) []T {
 	return items
 }
 
-// Slice returns a new array with the elements from the specified start index to the specified end index
-// items: The array to slice
+// Slice returns a new slice with the elements from the specified start index to the specified end index
+// items: The slice to slice
 // start: The index to start at
 // end: The index to end at
 func Slice[T any](items []T, start int, end int) []T {
 	return items[start:end]
 }
 
-// SortWhere sorts the elements of an array in place using the specified comparer function
-// items: The array to sort
+// SortWhere sorts the elements of an slice in place using the specified comparer function
+// items: The slice to sort
 // comparer: The comparer function to use
 func SortWhere[T any](items []T, comparer func(T, T) bool) []T {
 	sort.Slice(items, func(i, j int) bool {
@@ -393,8 +393,8 @@ func SortWhere[T any](items []T, comparer func(T, T) bool) []T {
 	return items
 }
 
-// Take returns a new array with the specified number of elements from the start of the array
-// items: The array to take elements from
+// Take returns a new slice with the specified number of elements from the start of the slice
+// items: The slice to take elements from
 // count: The number of elements to take
 func Take[T any](items []T, count int) []T {
 	if len(items) == 0 {
@@ -406,15 +406,15 @@ func Take[T any](items []T, count int) []T {
 	return items[:count]
 }
 
-// TakeLast returns a new array with the specified number of elements from the end of the array
-// items: The array to take elements from
+// TakeLast returns a new slice with the specified number of elements from the end of the slice
+// items: The slice to take elements from
 // count: The number of elements to take
 func TakeLast[T any](items []T, count int) []T {
 	return items[len(items)-count:]
 }
 
-// TakeWhile returns a new array with elements from the start of the array while the predicate returns true
-// items: The array to take elements from
+// TakeWhile returns a new slice with elements from the start of the slice while the predicate returns true
+// items: The slice to take elements from
 // predicate: The predicate to test each element against
 func TakeWhile[T any](items []T, predicate func(T) bool) []T {
 	var taken []T
@@ -430,8 +430,8 @@ func TakeWhile[T any](items []T, predicate func(T) bool) []T {
 	return taken
 }
 
-// Skip returns a new array with the specified number of elements removed from the start of the array
-// items: The array to skip elements from
+// Skip returns a new slice with the specified number of elements removed from the start of the slice
+// items: The slice to skip elements from
 // count: The number of elements to skip
 func Skip[T any](items []T, count int) []T {
 	if len(items) == 0 {
@@ -443,15 +443,15 @@ func Skip[T any](items []T, count int) []T {
 	return items[count:]
 }
 
-// SkipLast returns a new array with the specified number of elements removed from the end of the array
-// items: The array to skip elements from
+// SkipLast returns a new slice with the specified number of elements removed from the end of the slice
+// items: The slice to skip elements from
 // count: The number of elements to skip
 func SkipLast[T any](items []T, count int) []T {
 	return items[:len(items)-count]
 }
 
-// SkipWhile returns a new array with elements removed from the start of the array while the predicate returns true
-// items: The array to skip elements from
+// SkipWhile returns a new slice with elements removed from the start of the slice while the predicate returns true
+// items: The slice to skip elements from
 // predicate: The predicate to test each element against
 func SkipWhile[T any](items []T, predicate func(T) bool) []T {
 	var skipped []T
@@ -465,8 +465,8 @@ func SkipWhile[T any](items []T, predicate func(T) bool) []T {
 	return skipped
 }
 
-// Chunk returns a new array with elements grouped into chunks of the specified size
-// items: The array to chunk
+// Chunk returns a new slice with elements grouped into chunks of the specified size
+// items: The slice to chunk
 // size: The size of each chunk
 func Chunk[T any](items []T, size int) [][]T {
 	var chunks [][]T
@@ -484,8 +484,8 @@ func Chunk[T any](items []T, size int) [][]T {
 	return chunks
 }
 
-// Flatten returns a new array with all sub-array elements concatenated
-// items: The array to flatten
+// Flatten returns a new slice with all sub-slice elements concatenated
+// items: The slice to flatten
 func Flatten[T any](items [][]T) []T {
 	var flattened []T
 
@@ -496,8 +496,8 @@ func Flatten[T any](items [][]T) []T {
 	return flattened
 }
 
-// ReplaceAll replaces all occurrences of a value in an array with another value
-// items: The array to replace values in
+// ReplaceAll replaces all occurrences of a value in an slice with another value
+// items: The slice to replace values in
 // oldValue: The value to replace
 // newValue: The value to replace with
 func ReplaceAll[T any](items []T, oldValue T, newValue T) []T {
@@ -510,8 +510,8 @@ func ReplaceAll[T any](items []T, oldValue T, newValue T) []T {
 	return items
 }
 
-// ReplaceAllWhere replaces all occurrences of a value in an array with the result of the selector function
-// items: The array to replace values in
+// ReplaceAllWhere replaces all occurrences of a value in an slice with the result of the selector function
+// items: The slice to replace values in
 // value: The value to replace with
 // predicate: The selector function to use
 func ReplaceAllWhere[T any](items []T, value T, predicate func(T) bool) []T {
@@ -524,8 +524,8 @@ func ReplaceAllWhere[T any](items []T, value T, predicate func(T) bool) []T {
 	return items
 }
 
-// Replace replaces the first occurrence of a value in an array with another value
-// items: The array to replace values in
+// Replace replaces the first occurrence of a value in an slice with another value
+// items: The slice to replace values in
 // oldValue: The value to replace
 // newValue: The value to replace with
 func Replace[T any](items []T, oldValue T, newValue T) []T {
@@ -536,8 +536,8 @@ func Replace[T any](items []T, oldValue T, newValue T) []T {
 	return items
 }
 
-// ReplaceWhere replaces the first occurrence of a value in an array with the result of the selector function
-// items: The array to replace values in
+// ReplaceWhere replaces the first occurrence of a value in an slice with the result of the selector function
+// items: The slice to replace values in
 // value: The value to replace with
 // predicate: The selector function to use
 func ReplaceWhere[T any](items []T, value T, predicate func(T) bool) []T {
@@ -548,15 +548,15 @@ func ReplaceWhere[T any](items []T, value T, predicate func(T) bool) []T {
 	return items
 }
 
-// Push adds an element to the end of an array
-// items: The array to add the element to
+// Push adds an element to the end of an slice
+// items: The slice to add the element to
 // item: The element to add
 func Push[T any](items []T, item T) []T {
 	return append(items, item)
 }
 
-// Pop removes the last element from an array and returns it
-// items: The array to remove the element from
+// Pop removes the last element from an slice and returns it
+// items: The slice to remove the element from
 func Pop[T any](items []T) (T, []T) {
 	if len(items) == 0 {
 		var zero T
@@ -565,15 +565,15 @@ func Pop[T any](items []T) (T, []T) {
 	return items[len(items)-1], items[:len(items)-1]
 }
 
-// Unshift adds an element to the start of an array
-// items: The array to add the element to
+// Unshift adds an element to the start of an slice
+// items: The slice to add the element to
 // item: The element to add
 func Unshift[T any](items []T, item T) []T {
 	return append([]T{item}, items...)
 }
 
-// Shift removes the first element from an array and returns it
-// items: The array to remove the element from
+// Shift removes the first element from an slice and returns it
+// items: The slice to remove the element from
 func Shift[T any](items []T) (T, []T) {
 	if len(items) == 0 {
 		var zero T
@@ -582,8 +582,8 @@ func Shift[T any](items []T) (T, []T) {
 	return items[0], items[1:]
 }
 
-// Last returns the last element in an array
-// items: The array to get the last element from
+// Last returns the last element in an slice
+// items: The slice to get the last element from
 func Last[T any](items []T) T {
 	if len(items) == 0 {
 		var zero T
@@ -592,8 +592,8 @@ func Last[T any](items []T) T {
 	return items[len(items)-1]
 }
 
-// First returns the first element in an array
-// items: The array to get the first element from
+// First returns the first element in an slice
+// items: The slice to get the first element from
 func First[T any](items []T) T {
 	var item T
 	if len(items) > 0 {
@@ -602,8 +602,8 @@ func First[T any](items []T) T {
 	return item
 }
 
-// Sum returns the sum of all elements in an array
-// items: The array to sum
+// Sum returns the sum of all elements in an slice
+// items: The slice to sum
 func Sum[T int | int32 | int64 | float32 | float64](items []T) T {
 	var sum T
 	for _, item := range items {
@@ -612,8 +612,8 @@ func Sum[T int | int32 | int64 | float32 | float64](items []T) T {
 	return sum
 }
 
-// Average returns the average of all elements in an array
-// items: The array to average
+// Average returns the average of all elements in an slice
+// items: The slice to average
 func Average[T int | int32 | int64 | float32 | float64](items []T) float64 {
 	if len(items) == 0 {
 		return 0
@@ -622,8 +622,8 @@ func Average[T int | int32 | int64 | float32 | float64](items []T) float64 {
 	return float64(sum) / float64(len(items))
 }
 
-// Min returns the minimum value in an array
-// items: The array to get the minimum value from
+// Min returns the minimum value in an slice
+// items: The slice to get the minimum value from
 func Min[T int | int32 | int64 | float32 | float64](items []T) T {
 	if len(items) == 0 {
 		var zero T
@@ -638,8 +638,8 @@ func Min[T int | int32 | int64 | float32 | float64](items []T) T {
 	return min
 }
 
-// Max returns the maximum value in an array
-// items: The array to get the maximum value from
+// Max returns the maximum value in an slice
+// items: The slice to get the maximum value from
 func Max[T int | int32 | int64 | float32 | float64](items []T) T {
 	if len(items) == 0 {
 		var zero T
@@ -654,8 +654,8 @@ func Max[T int | int32 | int64 | float32 | float64](items []T) T {
 	return max
 }
 
-// Partition splits an array into two arrays based on a predicate
-// items: The array to partition
+// Partition splits an slice into two slices based on a predicate
+// items: The slice to partition
 // predicate: The predicate to test each element against
 func Partition[T any](items []T, predicate func(T) bool) ([]T, []T) {
 	var trueItems, falseItems []T
@@ -669,9 +669,9 @@ func Partition[T any](items []T, predicate func(T) bool) ([]T, []T) {
 	return trueItems, falseItems
 }
 
-// Zip combines two arrays into a new array using a selector function
-// items: The array to combine
-// other: The array to combine
+// Zip combines two slices into a new slice using a selector function
+// items: The slice to combine
+// other: The slice to combine
 // selector: The selector function to use
 func Zip[T any, U any, V any](items []T, other []U, selector func(T, U) V) []V {
 	minLen := len(items)
@@ -685,8 +685,8 @@ func Zip[T any, U any, V any](items []T, other []U, selector func(T, U) V) []V {
 	return zipped
 }
 
-// All determines whether all elements of an array satisfy a condition
-// items: The array to search
+// All determines whether all elements of an slice satisfy a condition
+// items: The slice to search
 // predicate: The predicate to test each element against
 func All[T any](items []T, predicate func(T) bool) bool {
 	for _, item := range items {
@@ -697,8 +697,8 @@ func All[T any](items []T, predicate func(T) bool) bool {
 	return true
 }
 
-// Any determines whether any element of an array satisfies a condition
-// items: The array to search
+// Any determines whether any element of an slice satisfies a condition
+// items: The slice to search
 // predicate: The predicate to test each element against
 func Any[T any](items []T, predicate func(T) bool) bool {
 	for _, item := range items {
@@ -709,8 +709,8 @@ func Any[T any](items []T, predicate func(T) bool) bool {
 	return false
 }
 
-// Count returns the number of elements in an array that satisfy a condition
-// items: The array to search
+// Count returns the number of elements in an slice that satisfy a condition
+// items: The slice to search
 // predicate: The predicate to test each element against
 func Count[T any](items []T, predicate func(T) bool) int {
 	count := 0
@@ -720,4 +720,16 @@ func Count[T any](items []T, predicate func(T) bool) int {
 		}
 	}
 	return count
+}
+
+// At returns the value at the provided index or the default value if the index is out of bounds
+// items: the slice
+// index: the index
+func At[T any](items []T, index int) T {
+	var zero T
+	if len(items) <= index || index < 0 || len(items) == 0 {
+		return zero
+	}
+
+	return items[index]
 }

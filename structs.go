@@ -1,6 +1,8 @@
 package ectolinq
 
 import (
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"reflect"
 	"strings"
@@ -204,4 +206,24 @@ func FromMap(m map[string]interface{}, s any) error {
 		field.Set(reflect.ValueOf(v))
 	}
 	return nil
+}
+
+// DeepCopy creates a deep copy of a value
+func DeepCopy[T any](s T) (T, error) {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	dec := gob.NewDecoder(&buf)
+
+	err := enc.Encode(s) // Encode original struct
+	if err != nil {
+		return s, err
+	}
+
+	var new T
+	err = dec.Decode(&new) // Decode into a new struct
+	if err != nil {
+		return s, err
+	}
+
+	return new, nil
 }

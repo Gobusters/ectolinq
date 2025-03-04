@@ -344,3 +344,41 @@ func TestFromMap(t *testing.T) {
 		assert.Equal(t, 30, s.Age)
 	})
 }
+
+func TestDeepCopy(t *testing.T) {
+	t.Run("Deep copy struct", func(t *testing.T) {
+		s := testStruct{
+			Name: "Test",
+			Age:  30,
+			Nested: nestedStruct{
+				Value: "NestedValue",
+			},
+		}
+		copied, err := DeepCopy(s)
+		require.NoError(t, err)
+
+		assert.Equal(t, s.Name, copied.Name)
+		assert.Equal(t, s.Age, copied.Age)
+		assert.Equal(t, s.Nested.Value, copied.Nested.Value)
+	})
+
+	t.Run("Deep copy pointer to struct", func(t *testing.T) {
+		s := &testStruct{
+			Name: "Test",
+			Age:  30,
+		}
+		copied, err := DeepCopy(s)
+		require.NoError(t, err)
+
+		assert.Equal(t, s.Name, copied.Name)
+		assert.Equal(t, s.Age, copied.Age)
+
+		// Modify the original struct
+		s.Name = "Modified"
+		s.Age = 31
+
+		// Deep copy should not be affected by the original modification
+		assert.Equal(t, "Test", copied.Name)
+		assert.Equal(t, 30, copied.Age)
+	})
+}

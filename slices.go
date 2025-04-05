@@ -224,32 +224,18 @@ func SequenceEqual[T any](items []T, other []T) bool {
 // Reduce applies an accumulator function over an slice
 // items: The slice to reduce
 // accumulator: The accumulator function to use
-func Reduce[T any](items []T, accumulator func(T, T) T) T {
-	if len(items) == 0 {
-		var zero T
-		return zero
+func Reduce[T any, U any](items []T, accumulator func(U, T) U, initialValue ...U) U {
+	var zero U
+
+	if len(initialValue) > 0 {
+		zero = initialValue[0]
 	}
-
-	result := items[0]
-	for _, item := range items[1:] {
-		result = accumulator(result, item)
-	}
-
-	return result
-}
-
-// ReduceWhere applies an accumulator function over an slice, starting with the specified initial value
-// items: The slice to reduce
-// initialValue: The value to start with
-// accumulator: The accumulator function to use
-func ReduceWhere[T any](items []T, initialValue T, accumulator func(T, T) T) T {
-	result := initialValue
 
 	for _, item := range items {
-		result = accumulator(result, item)
+		zero = accumulator(zero, item)
 	}
 
-	return result
+	return zero
 }
 
 // Map projects each element of an slice into a new form

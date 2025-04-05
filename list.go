@@ -146,15 +146,8 @@ func (l List[T]) SequenceEqual(other []T) bool {
 
 // Reduce applies an accumulator function over an array
 // accumulator: The accumulator function to use
-func (l List[T]) Reduce(accumulator func(T, T) T) T {
-	return Reduce(l, accumulator)
-}
-
-// ReduceWhere applies an accumulator function over an array. Starts with the specified value
-// initialValue: The value to start with
-// accumulator: The accumulator function to use
-func (l List[T]) ReduceWhere(initialValue T, accumulator func(T, T) T) T {
-	return ReduceWhere(l, initialValue, accumulator)
+func (l List[T]) Reduce(accumulator func(T, T) T, initialValue ...T) T {
+	return Reduce(l, accumulator, initialValue...)
 }
 
 // Filter removes all elements from an array that satisfy the predicate

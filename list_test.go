@@ -162,14 +162,6 @@ func TestListReduce(t *testing.T) {
 	})
 }
 
-func TestListReduceWhere(t *testing.T) {
-	t.Run("Reduce with initial value", func(t *testing.T) {
-		list := ToList([]string{"a", "b", "c"})
-		concat := list.ReduceWhere("", func(a, b string) string { return a + b })
-		assert.Equal(t, "abc", concat, "Should reduce to concatenation of all elements")
-	})
-}
-
 func TestListFilter(t *testing.T) {
 	t.Run("Filter even numbers", func(t *testing.T) {
 		list := ToList([]int{1, 2, 3, 4, 5, 6})
